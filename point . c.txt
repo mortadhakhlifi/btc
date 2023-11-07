@@ -1,0 +1,108 @@
+
+int ajouter(const char *filename, const user u) {
+    FILE *f = fopen(filename, "a");
+    if (f != NULL) {
+        fprintf(f, "%s %s %s %s %d %d %d %d %d %d %d\n",
+                u.firstname, u.lastname, u.ID, u.BTC,
+                u.BD, u.BM, u.BY, u.gender, u.role,
+                u.T[0], u.T[1], u.T[2]);
+        fclose(f);
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+int modifier(const char *filename, const int userID, const user u) {
+    int tr = 0;
+    user currentUser;
+    FILE *f = fopen(filename, "r");
+    FILE *f2 = fopen("nouv.txt", "w");
+
+    if (f != NULL && f2 != NULL) {
+        while (fscanf(f, "%s %s %s %s %d %d %d %d %d %d %d\n",
+                      currentUser.firstname, currentUser.lastname,
+                      currentUser.ID, currentUser.BTC, &currentUser.BD,
+                      &currentUser.BM, &currentUser.BY, &currentUser.gender,
+                      &currentUser.role, &currentUser.T[0], &currentUser.T[1],
+                      &currentUser.T[2]) != EOF) {
+            if (strcmp(currentUser.ID, u.ID) == 0) {
+                fprintf(f2, "%s %s %s %s %d %d %d %d %d %d %d\n",
+                        u.firstname, u.lastname, u.ID, u.BTC, u.BD,
+                        u.BM, u.BY, u.gender, u.role, u.T[0], u.T[1], u.T[2]);
+                tr = 1;
+            } else {
+                fprintf(f2, "%s %s %s %s %d %d %d %d %d %d %d\n",
+                        currentUser.firstname, currentUser.lastname, currentUser.ID,
+                        currentUser.BTC, currentUser.BD, currentUser.BM, currentUser.BY,
+                        currentUser.gender, currentUser.role, currentUser.T[0],
+                        currentUser.T[1], currentUser.T[2]);
+            }
+        }
+    }
+
+    fclose(f);
+    fclose(f2);
+    remove(filename);
+    rename("nouv.txt", filename);
+    return tr;
+}
+
+int supprimer(const char *filename, const int userID) {
+    int tr = 0;
+    user currentUser;
+    FILE *f = fopen(filename, "r");
+    FILE *f2 = fopen("nouv.txt", "w");
+
+    if (f != NULL && f2 != NULL) {
+        while (fscanf(f, "%s %s %s %s %d %d %d %d %d %d %d\n",
+                      currentUser.firstname, currentUser.lastname,
+                      currentUser.ID, currentUser.BTC, &currentUser.BD,
+                      &currentUser.BM, &currentUser.BY, &currentUser.gender,
+                      &currentUser.role, &currentUser.T[0], &currentUser.T[1],
+                      &currentUser.T[2]) != EOF) {
+            if (strcmp(currentUser.ID, userID) == 0) {
+                tr = 1;
+            } else {
+                fprintf(f2, "%s %s %s %s %d %d %d %d %d %d %d\n",
+                        currentUser.firstname, currentUser.lastname, currentUser.ID,
+                        currentUser.BTC, currentUser.BD, currentUser.BM, currentUser.BY,
+                        currentUser.gender, currentUser.role, currentUser.T[0],
+                        currentUser.T[1], currentUser.T[2]);
+            }
+        }
+    }
+
+    fclose(f);
+    fclose(f2);
+    remove(filename);
+    rename("nouv.txt", filename);
+    return tr;
+}
+
+user chercher(const char *filename, const int userID) {
+    user currentUser;
+    int tr = 0;
+    FILE *f = fopen(filename, "r");
+
+    if (f != NULL) {
+        while (tr == 0 && fscanf(f, "%s %s %s %s %d %d %d %d %d %d %d\n",
+                                currentUser.firstname, currentUser.lastname,
+                                currentUser.ID, currentUser.BTC, &currentUser.BD,
+                                &currentUser.BM, &currentUser.BY, &currentUser.gender,
+                                &currentUser.role, &currentUser.T[0], &currentUser.T[1],
+                                &currentUser.T[2]) != EOF) {
+            if (strcmp(currentUser.ID, userID) == 0) {
+                tr = 1;
+            }
+        }
+    }
+
+    fclose(f);
+
+    if (tr == 0) {
+        strcpy(currentUser.ID, "");
+    }
+
+    return currentUser;
+}
